@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
 import api from '../services/api';
-import { KeyRound, User } from 'lucide-react';
+import { KeyRound } from 'lucide-react';
 
 export default function Perfil() {
     const { user } = useAuth();
