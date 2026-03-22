@@ -6,6 +6,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.EnvironmentAware;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import java.net.URI;
  * antes da criação de qualquer bean de singleton (como DataSource, Flyway, etc).
  */
 @Component
+@Profile("!prod")
 public class DatabaseInitializer implements BeanFactoryPostProcessor, EnvironmentAware {
 
     private static final Logger log = LoggerFactory.getLogger(DatabaseInitializer.class);
