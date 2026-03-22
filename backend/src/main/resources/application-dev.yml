@@ -1,0 +1,36 @@
+# Perfil: desenvolvimento local
+# Ativado automaticamente quando SPRING_PROFILES_ACTIVE não está definido.
+# Todas as configurações aqui são defaults para rodar local — não use em produção.
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/cobranca
+    username: postgres
+    password: "123456"
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ""
+    password: ""
+
+jwt:
+  secret: "aW1wb3NzaWJsZVRvR3Vlc3NTZWNyZXRLZXlXaGljaElzQXRMZWFzdDI1NkJpdHNMZW5ndGg="
+
+cors:
+  allowed-origins: "http://localhost:5173,http://localhost:5174,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:5174"
+
+sankhya:
+  login-url: "http://n-ti-daniel2:8080/mge/service.sbr?serviceName=MobileLoginSP.login&counter=1"
+  service-url: "http://n-ti-daniel2:8080/startquimica/service.sbr?serviceName=ImportacaoEDIFreteSP.integrarDocTransp&outputType=json"
+  auth-enabled: true
+  username: daniel
+  password: dcd0424
+  connect-timeout-ms: 10000
+  read-timeout-ms: 60000
+
+app:
+  frontend-url: "http://localhost:5173"
+  mail:
+    from: noreply@startquimica.com.br
