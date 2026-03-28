@@ -156,6 +156,100 @@ Requisições para `/api` são automaticamente redirecionadas para `http://local
 | `GET/POST/PUT/DELETE` | `/api/tomadores` | CRUD de tomadores | Autenticado |
 | `GET` | `/api/dashboard` | Indicadores e estatísticas | Autenticado |
 
+---
+
+## API Externa para Cobranças
+
+Endpoint público para criação e envio de cobranças diretamente pelo sistema Sankhya ou qualquer integrador externo, sem necessidade de login JWT.
+
+### Autenticação
+
+Cada tenant possui uma **API Key** gerada automaticamente no cadastro, visível na tela de **Tenants** (coluna "API Key") e no formulário de edição. Envie-a no header:
+
+```
+X-API-Key: <sua-api-key>
+```
+
+### Endpoint
+
+```
+POST /api/api-externa/cobrancas
+Content-Type: application/json
+X-API-Key: <sua-api-key>
+```
+
+### Corpo da requisição
+
+```json
+{
+  "cnpjTransportador": "12345678000195",
+  "cnpjContratante": "98765432000100",
+  "ordemCarga": 1001,
+  "tipoTransporte": "T",
+  "tipoCobranca": "NM",
+  "docFisc": [
+    {
+      "numDoc": 42,
+      "serieDoc": "1",
+      "valor": 1500.00,
+      "emissao": "20/03/2026",
+      "vencimento": "20/04/2026",
+      "baseCalculo": 1500.00,
+      "aliquota": 10.00,
+      "valorImposto": 150.00,
+      "chave": "35260312345678000195570000000004200000042000",
+      "TipoDoc": "CTE",
+      "notas": [
+        {
+          "numero": 100,
+          "serie": "1",
+          "dataEntrega": "22/03/2026"
+        }
+      ]
+    }
+  ]
+}
+```
+
+### Resposta — sucesso (`201 Created`)
+
+```json
+{
+  "success": true,
+  "protocolo": "PROT-20260328-001",
+  "cobrancaId": 57
+}
+```
+
+### Resposta — erro de autenticação (`401 Unauthorized`)
+
+```json
+{
+  "success": false,
+  "error": "API key inválida"
+}
+```
+
+### Resposta — erro de negócio (`422 Unprocessable Entity`)
+
+```json
+{
+  "success": false,
+  "error": "Transportador não encontrado para o CNPJ: 12345678000195"
+}
+```
+
+### Comportamento
+
+1. Valida o header `X-API-Key` — retorna 401 se ausente ou inválida.
+2. Busca `Transportador` e `Tomador` por CNPJ no cadastro do tenant — retorna 422 se não encontrado.
+3. Cria a cobrança com status **Pendente (`P`)**.
+4. Envia imediatamente ao Sankhya via `ImportacaoEDIFreteSP.integrarDocTransp`.
+5. Em caso de erro no envio, a cobrança é excluída (rollback) e o erro é retornado.
+6. Em caso de sucesso, retorna o protocolo Sankhya e o ID da cobrança criada (status `E`).
+
+> **Pré-condição:** Transportador e Tomador devem estar previamente cadastrados no tenant correspondente.
+
 ### Filtros disponíveis em `GET /api/cobrancas`
 
 `status`, `tipoCobranca`, `tipoTransporte`, `transportador`, `alteracaoDe`, `alteracaoAte`, `envioDe`, `envioAte`
@@ -184,6 +278,7 @@ As migrações são gerenciadas pelo **Flyway** e executadas automaticamente na 
 | `V3__add_data_ultima_alteracao.sql` | Campo `data_ultima_alteracao` em `cobrancas` |
 | `V4__add_indexes.sql` | Índices de performance em `cobrancas` |
 | `V5__add_password_reset_token.sql` | Campos de token de recuperação de senha em `usuarios` |
+| `V6__add_api_key_to_tenant.sql` | Campo `api_key` único em `tenants` para autenticação da API externa |
 
 ### Status de cobrança
 

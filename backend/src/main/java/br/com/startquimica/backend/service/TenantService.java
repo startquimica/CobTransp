@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +26,15 @@ public class TenantService {
 
     @Transactional
     public Tenant save(Tenant tenant) {
+        if (tenant.getApiKey() == null) {
+            if (tenant.getId() != null) {
+                tenantRepository.findById(tenant.getId())
+                        .ifPresent(existing -> tenant.setApiKey(existing.getApiKey()));
+            }
+            if (tenant.getApiKey() == null) {
+                tenant.setApiKey(UUID.randomUUID().toString());
+            }
+        }
         return tenantRepository.save(tenant);
     }
 

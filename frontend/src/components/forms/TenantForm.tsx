@@ -6,6 +6,7 @@ import { useToast } from '../../contexts/ToastContext';
 
 interface Tenant extends BaseEntity {
     nome: string;
+    apiKey?: string;
 }
 
 interface TenantFormProps {
@@ -53,6 +54,18 @@ export const TenantForm: React.FC<TenantFormProps> = ({ onSuccess, onCancel, ini
                     onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                 />
             </div>
+            {initialData?.apiKey && (
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">API Key</label>
+                    <input
+                        type="text"
+                        readOnly
+                        className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm font-mono text-gray-600 cursor-default"
+                        value={initialData.apiKey}
+                    />
+                    <p className="mt-1 text-xs text-gray-500">Use este valor no header <code>X-API-Key</code> para acessar a API externa.</p>
+                </div>
+            )}
             <div className="flex justify-end gap-3 pt-4">
                 <button
                     type="button"

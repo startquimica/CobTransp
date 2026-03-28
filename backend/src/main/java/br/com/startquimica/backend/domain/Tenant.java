@@ -1,5 +1,6 @@
 package br.com.startquimica.backend.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,5 +20,8 @@ public class Tenant {
     private Long id;
 
     private String nome;
+
+    @Column(name = "api_key", unique = true)
+    private String apiKey;
 
 }

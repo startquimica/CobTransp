@@ -10,6 +10,7 @@ import { useConfirm } from '../contexts/ConfirmContext';
 
 interface Tenant extends BaseEntity {
     nome: string;
+    apiKey?: string;
 }
 
 const Tenants = () => {
@@ -58,6 +59,12 @@ const Tenants = () => {
     const columns = [
         { header: 'ID', accessor: 'id' as keyof Tenant },
         { header: 'Nome', accessor: 'nome' as keyof Tenant },
+        {
+            header: 'API Key',
+            accessor: (item: Tenant) => (
+                <span className="font-mono text-xs text-gray-500">{item.apiKey ?? '—'}</span>
+            )
+        },
         {
             header: 'Ações',
             accessor: (item: Tenant) => (
