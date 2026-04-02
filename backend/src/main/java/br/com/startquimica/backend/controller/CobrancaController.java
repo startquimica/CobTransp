@@ -1,6 +1,8 @@
 package br.com.startquimica.backend.controller;
 
 import br.com.startquimica.backend.domain.Cobranca;
+import br.com.startquimica.backend.dto.ImportacaoArquivoResultDTO;
+import br.com.startquimica.backend.importacao.FormatoArquivo;
 import br.com.startquimica.backend.service.CobrancaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDate;
 
 @RestController
@@ -73,6 +77,18 @@ public class CobrancaController {
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         cobrancaService.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/importar-arquivo")
+    @PreAuthorize("hasAnyRole('GERENTE','OPERADOR')")
+    public ResponseEntity<ImportacaoArquivoResultDTO> importarArquivo(
+            @RequestParam MultipartFile file,
+            @RequestParam FormatoArquivo formato,
+            @RequestParam String tipoCobranca,
+            @RequestParam String tipoTransporte,
+            @RequestParam String tipoDocumento) throws IOException {
+        return ResponseEntity.ok(
+                cobrancaService.importarArquivo(file, formato, tipoCobranca, tipoTransporte, tipoDocumento));
     }
 }
 

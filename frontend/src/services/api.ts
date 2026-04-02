@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { ImportacaoArquivoResultDTO } from '../types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
@@ -33,5 +34,23 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+export function importarArquivo(
+    file: File,
+    formato: string,
+    tipoCobranca: string,
+    tipoTransporte: string,
+    tipoDocumento: string
+): Promise<ImportacaoArquivoResultDTO> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('formato', formato);
+    formData.append('tipoCobranca', tipoCobranca);
+    formData.append('tipoTransporte', tipoTransporte);
+    formData.append('tipoDocumento', tipoDocumento);
+    return api.post('/cobrancas/importar-arquivo', formData, {
+        headers: { 'Content-Type': undefined },
+    }).then(r => r.data);
+}
 
 export default api;

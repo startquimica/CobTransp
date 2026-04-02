@@ -49,6 +49,20 @@ export interface Cobranca extends BaseEntity {
     dataUltimaAlteracao?: string;
 }
 
+// --- Importação de Arquivo ---
+
+export interface ErroLinhaDTO {
+    linha: number;
+    cnpjTomador: string;
+    ctrc: string;
+    motivo: string;
+}
+
+export interface ImportacaoArquivoResultDTO {
+    cobrancaId: number | null;
+    erros: ErroLinhaDTO[];
+}
+
 // --- Dashboard DTOs ---
 
 export interface CobrancaResumoDTO {

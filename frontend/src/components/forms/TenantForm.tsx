@@ -49,7 +49,7 @@ export const TenantForm: React.FC<TenantFormProps> = ({ onSuccess, onCancel, ini
                 <input
                     type="text"
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                     value={formData.nome}
                     onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                 />
@@ -60,7 +60,7 @@ export const TenantForm: React.FC<TenantFormProps> = ({ onSuccess, onCancel, ini
                     <input
                         type="text"
                         readOnly
-                        className="mt-1 block w-full rounded-md border-gray-300 bg-gray-50 shadow-sm sm:text-sm font-mono text-gray-600 cursor-default"
+                        className="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50 px-3 py-2 sm:text-sm font-mono text-gray-600 cursor-default"
                         value={initialData.apiKey}
                     />
                     <p className="mt-1 text-xs text-gray-500">Use este valor no header <code>X-API-Key</code> para acessar a API externa.</p>

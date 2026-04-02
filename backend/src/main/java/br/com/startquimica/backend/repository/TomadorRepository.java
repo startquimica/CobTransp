@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface TomadorRepository extends JpaRepository<Tomador, Long> {
     Optional<Tomador> findByCnpj(String cnpj);
 
+    Optional<Tomador> findByTenantIdAndCnpj(Long tenantId, String cnpj);
+
     @Query("SELECT t.tenantId, COUNT(t) FROM Tomador t GROUP BY t.tenantId")
     List<Object[]> countGroupByTenant();
 }

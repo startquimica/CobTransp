@@ -12,6 +12,8 @@ import java.util.Optional;
 public interface TransportadorRepository extends JpaRepository<Transportador, Long> {
     Optional<Transportador> findByCnpj(String cnpj);
 
+    Optional<Transportador> findByTenantIdAndCnpj(Long tenantId, String cnpj);
+
     @Query("SELECT t.tenantId, COUNT(t) FROM Transportador t GROUP BY t.tenantId")
     List<Object[]> countGroupByTenant();
 }

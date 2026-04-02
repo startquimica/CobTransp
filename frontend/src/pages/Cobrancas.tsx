@@ -1,12 +1,14 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Plus, RefreshCw, Pencil, Trash2, Send, AlertCircle, Filter, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, RefreshCw, Pencil, Trash2, Send, AlertCircle, Filter, X, ChevronLeft, ChevronRight, FileUp } from 'lucide-react';
 import api from '../services/api';
 import { Table } from '../components/common/Table';
 import type { Cobranca } from '../types';
 import { Modal } from '../components/common/Modal';
 import { CobrancaForm } from '../components/forms/CobrancaForm';
+import { ImportarArquivoModal } from '../components/forms/ImportarArquivoModal';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const DEFAULT_FILTERS = {
     status: 'R,P',
@@ -22,6 +24,7 @@ const DEFAULT_FILTERS = {
 const Cobrancas = () => {
     const { showToast } = useToast();
     const confirm = useConfirm();
+    const { user } = useAuth();
     const [data, setData] = useState<Cobranca[]>([]);
     const [totalElements, setTotalElements] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
@@ -29,10 +32,13 @@ const Cobrancas = () => {
     const PAGE_SIZE = 50;
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isImportModalOpen, setIsImportModalOpen] = useState(false);
     const [selectedCobranca, setSelectedCobranca] = useState<Cobranca | undefined>();
     const [errorModal, setErrorModal] = useState<{ open: boolean; message: string }>({ open: false, message: '' });
     const [showFilters, setShowFilters] = useState(false);
     const [filters, setFilters] = useState(DEFAULT_FILTERS);
+
+    const canImport = user?.role === 'GERENTE' || user?.role === 'OPERADOR';
 
     const hasActiveFilters = (Object.keys(filters) as Array<keyof typeof filters>).some(
         k => filters[k] !== DEFAULT_FILTERS[k]
@@ -253,6 +259,15 @@ const Cobrancas = () => {
                         <Plus className="w-4 h-4" />
                         Nova Cobrança
                     </button>
+                    {canImport && (
+                        <button
+                            onClick={() => setIsImportModalOpen(true)}
+                            className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors flex items-center gap-2"
+                        >
+                            <FileUp className="w-4 h-4" />
+                            Importar Arquivo
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -420,6 +435,12 @@ const Cobrancas = () => {
                     onCancel={() => setIsModalOpen(false)}
                 />
             </Modal>
+
+            <ImportarArquivoModal
+                isOpen={isImportModalOpen}
+                onClose={() => setIsImportModalOpen(false)}
+                onSuccess={() => fetchCobrancas(page)}
+            />
         </div>
     );
 };
