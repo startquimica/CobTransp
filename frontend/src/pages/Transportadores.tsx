@@ -55,6 +55,8 @@ const Transportadores = () => {
         { header: 'ID', accessor: 'id' as keyof Transportador },
         { header: 'Nome', accessor: 'nome' as keyof Transportador },
         { header: 'CNPJ', accessor: 'cnpj' as keyof Transportador },
+        { header: 'E-mail', accessor: (item: Transportador) => item.email ?? '—' },
+        { header: 'Telefone', accessor: (item: Transportador) => item.telefone ?? '—' },
         {
             header: 'Ações',
             accessor: (item: Transportador) => (
@@ -117,6 +119,7 @@ const Transportadores = () => {
                 isOpen={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
                 title={selectedTransportador ? "Editar Transportador" : "Novo Transportador"}
+                size="xl"
             >
                 <TransportadorForm 
                     initialData={selectedTransportador}

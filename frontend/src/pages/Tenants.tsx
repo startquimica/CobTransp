@@ -2,16 +2,11 @@ import { useEffect, useState } from 'react';
 import { Plus, RefreshCw, Pencil, Trash2 } from 'lucide-react';
 import api from '../services/api';
 import { Table } from '../components/common/Table';
-import type { BaseEntity } from '../types';
+import type { Tenant } from '../types';
 import { Modal } from '../components/common/Modal';
 import { TenantForm } from '../components/forms/TenantForm';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
-
-interface Tenant extends BaseEntity {
-    nome: string;
-    apiKey?: string;
-}
 
 const Tenants = () => {
     const { showToast } = useToast();
@@ -59,6 +54,8 @@ const Tenants = () => {
     const columns = [
         { header: 'ID', accessor: 'id' as keyof Tenant },
         { header: 'Nome', accessor: 'nome' as keyof Tenant },
+        { header: 'E-mail', accessor: (item: Tenant) => item.email ?? '—' },
+        { header: 'Telefone', accessor: (item: Tenant) => item.telefone ?? '—' },
         {
             header: 'API Key',
             accessor: (item: Tenant) => (
@@ -127,6 +124,7 @@ const Tenants = () => {
                 isOpen={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
                 title={selectedTenant ? "Editar Tenant" : "Novo Tenant"}
+                size="xl"
             >
                 <TenantForm 
                     initialData={selectedTenant}

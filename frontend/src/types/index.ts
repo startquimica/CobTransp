@@ -5,14 +5,51 @@ export class BaseEntity {
     updatedAt?: string;
 }
 
+export interface Contato {
+    id?: number;
+    nome: string;
+    email?: string;
+    telefone?: string;
+    cargo?: string;
+}
+
 export interface Transportador extends BaseEntity {
     nome: string;
     cnpj: string;
+    inscricaoEstadual?: string;
+    email?: string;
+    telefone?: string;
+    endereco?: string;
+    cidade?: string;
+    uf?: string;
+    cep?: string;
+    contatos: Contato[];
 }
 
 export interface Tomador extends BaseEntity {
     nome: string;
     cnpj: string;
+    inscricaoEstadual?: string;
+    email?: string;
+    telefone?: string;
+    endereco?: string;
+    cidade?: string;
+    uf?: string;
+    cep?: string;
+    contatos: Contato[];
+}
+
+export interface Tenant extends BaseEntity {
+    nome: string;
+    apiKey?: string;
+    inscricaoEstadual?: string;
+    email?: string;
+    telefone?: string;
+    endereco?: string;
+    cidade?: string;
+    uf?: string;
+    cep?: string;
+    contatos: Contato[];
 }
 
 export interface Nota extends BaseEntity {

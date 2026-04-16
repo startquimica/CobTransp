@@ -55,6 +55,7 @@ const Usuarios = () => {
         { header: 'ID', accessor: 'id' as keyof User },
         { header: 'Nome', accessor: 'nome' as keyof User },
         { header: 'Email', accessor: 'email' as keyof User },
+        { header: 'Telefone', accessor: (item: User) => (item as any).telefone ?? '—' },
         { 
             header: 'Role', 
             accessor: (item: User) => (

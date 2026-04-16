@@ -33,6 +33,8 @@ public class Usuario extends BaseEntity {
 
     private String role; // ADMIN_TENANT, GERENTE, OPERADOR, VISUALIZADOR
 
+    private String telefone;
+
     @Column(name = "password_reset_token")
     private String passwordResetToken;
 

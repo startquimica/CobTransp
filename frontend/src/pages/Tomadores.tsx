@@ -55,6 +55,8 @@ const Tomadores = () => {
         { header: 'ID', accessor: 'id' as keyof Tomador },
         { header: 'Nome', accessor: 'nome' as keyof Tomador },
         { header: 'CNPJ', accessor: 'cnpj' as keyof Tomador },
+        { header: 'E-mail', accessor: (item: Tomador) => item.email ?? '—' },
+        { header: 'Telefone', accessor: (item: Tomador) => item.telefone ?? '—' },
         {
             header: 'Ações',
             accessor: (item: Tomador) => (
@@ -117,6 +119,7 @@ const Tomadores = () => {
                 isOpen={isModalOpen} 
                 onClose={() => setIsModalOpen(false)} 
                 title={selectedTomador ? "Editar Tomador" : "Novo Tomador"}
+                size="xl"
             >
                 <TomadorForm 
                     initialData={selectedTomador}
