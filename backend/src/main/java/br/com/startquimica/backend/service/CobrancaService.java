@@ -15,9 +15,13 @@ import br.com.startquimica.backend.repository.CobrancaSpec;
 import br.com.startquimica.backend.repository.TomadorRepository;
 import br.com.startquimica.backend.repository.TransportadorRepository;
 import br.com.startquimica.backend.security.TenantContext;
+import br.com.startquimica.backend.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,10 +37,12 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CobrancaService {
 
     private final CobrancaRepository cobrancaRepository;
     private final SankhyaService sankhyaService;
+    private final LogEnvioCobrancaService logEnvioCobrancaService;
     private final TransportadorRepository transportadorRepository;
     private final TomadorRepository tomadorRepository;
     private final List<ArquivoParser> arquivoParsers;
@@ -86,6 +92,11 @@ public class CobrancaService {
 
     @Transactional
     public Cobranca enviarParaSankhya(Long id) {
+        return enviarParaSankhya(id, "MANUAL", getUsuarioIdFromContext());
+    }
+
+    @Transactional
+    public Cobranca enviarParaSankhya(Long id, String origem, Long usuarioId) {
         Cobranca cobranca = cobrancaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Cobrança não encontrada"));
 
@@ -96,13 +107,52 @@ public class CobrancaService {
             throw new RuntimeException("Cobrança cancelada não pode ser enviada");
         }
 
-        String protocolo = sankhyaService.enviarCobranca(cobranca);
+        String payloadJson = sankhyaService.serializarPayload(cobranca);
+        String urlDestino = sankhyaService.getServiceUrl();
 
-        cobranca.setStatus("E");
-        cobranca.setDataEnvio(LocalDateTime.now());
-        cobranca.setProtocoloSankhya(protocolo);
+        long inicio = System.currentTimeMillis();
+        try {
+            String protocolo = sankhyaService.enviarCobranca(cobranca);
+            long tempoMs = System.currentTimeMillis() - inicio;
 
-        return cobrancaRepository.save(cobranca);
+            logEnvioCobrancaService.registrar(
+                    cobranca, payloadJson, urlDestino, origem, usuarioId,
+                    true, protocolo, null, null, protocolo, tempoMs);
+
+            cobranca.setStatus("E");
+            cobranca.setDataEnvio(LocalDateTime.now());
+            cobranca.setProtocoloSankhya(protocolo);
+
+            return cobrancaRepository.save(cobranca);
+        } catch (Exception e) {
+            long tempoMs = System.currentTimeMillis() - inicio;
+
+            String codigoErro = null;
+            String mensagemErro = e.getMessage();
+            if (mensagemErro != null && mensagemErro.startsWith("Erro HTTP ")) {
+                codigoErro = mensagemErro.length() > 13
+                        ? mensagemErro.substring(10, Math.min(mensagemErro.indexOf(' ', 10) > 0 ? mensagemErro.indexOf(' ', 10) : 13, mensagemErro.length()))
+                        : mensagemErro.substring(10);
+            }
+
+            logEnvioCobrancaService.registrar(
+                    cobranca, payloadJson, urlDestino, origem, usuarioId,
+                    false, null, codigoErro, mensagemErro, null, tempoMs);
+
+            throw e;
+        }
+    }
+
+    private Long getUsuarioIdFromContext() {
+        try {
+            Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+            if (auth != null && auth.getPrincipal() instanceof UserPrincipal) {
+                return ((UserPrincipal) auth.getPrincipal()).getId();
+            }
+        } catch (Exception e) {
+            log.debug("Não foi possível obter usuário do contexto de segurança", e);
+        }
+        return null;
     }
 
     @Transactional

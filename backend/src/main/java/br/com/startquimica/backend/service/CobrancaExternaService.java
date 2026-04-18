@@ -66,7 +66,7 @@ public class CobrancaExternaService {
         Cobranca saved = cobrancaService.save(cobranca);
 
         try {
-            Cobranca enviada = cobrancaService.enviarParaSankhya(saved.getId());
+            Cobranca enviada = cobrancaService.enviarParaSankhya(saved.getId(), "API_EXTERNA", null);
             return CobrancaExternaResponseDTO.success(enviada.getProtocoloSankhya(), enviada.getId());
         } catch (Exception e) {
             log.error("Erro ao enviar cobrança {} ao Sankhya, realizando rollback", saved.getId(), e);

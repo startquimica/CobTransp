@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Plus, RefreshCw, Pencil, Trash2, Send, AlertCircle, Filter, X, ChevronLeft, ChevronRight, FileUp } from 'lucide-react';
+import { Plus, RefreshCw, Pencil, Trash2, Send, AlertCircle, Filter, X, ChevronLeft, ChevronRight, FileUp, FileText } from 'lucide-react';
 import api from '../services/api';
 import { Table } from '../components/common/Table';
 import type { Cobranca } from '../types';
 import { Modal } from '../components/common/Modal';
 import { CobrancaForm } from '../components/forms/CobrancaForm';
 import { ImportarArquivoModal } from '../components/forms/ImportarArquivoModal';
+import { LogsEnvioModal } from '../components/forms/LogsEnvioModal';
 import { useToast } from '../contexts/ToastContext';
 import { useConfirm } from '../contexts/ConfirmContext';
 import { useAuth } from '../contexts/AuthContext';
@@ -33,6 +34,7 @@ const Cobrancas = () => {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+    const [logsCobrancaId, setLogsCobrancaId] = useState<number | null>(null);
     const [selectedCobranca, setSelectedCobranca] = useState<Cobranca | undefined>();
     const [errorModal, setErrorModal] = useState<{ open: boolean; message: string }>({ open: false, message: '' });
     const [showFilters, setShowFilters] = useState(false);
@@ -209,6 +211,13 @@ const Cobrancas = () => {
                             : 'text-green-600 hover:bg-green-50')}
                     >
                         <Send className="w-4 h-4" />
+                    </button>
+                    <button
+                        onClick={() => setLogsCobrancaId(item?.id)}
+                        title="Logs de envio"
+                        className="p-1 text-purple-600 hover:bg-purple-50 rounded"
+                    >
+                        <FileText className="w-4 h-4" />
                     </button>
                     <button 
                         onClick={() => handleEdit(item)}
@@ -441,6 +450,14 @@ const Cobrancas = () => {
                 onClose={() => setIsImportModalOpen(false)}
                 onSuccess={() => fetchCobrancas(page)}
             />
+
+            {logsCobrancaId !== null && (
+                <LogsEnvioModal
+                    isOpen={true}
+                    onClose={() => setLogsCobrancaId(null)}
+                    cobrancaId={logsCobrancaId}
+                />
+            )}
         </div>
     );
 };

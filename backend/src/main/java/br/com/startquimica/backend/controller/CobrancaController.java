@@ -1,9 +1,11 @@
 package br.com.startquimica.backend.controller;
 
 import br.com.startquimica.backend.domain.Cobranca;
+import br.com.startquimica.backend.domain.LogEnvioCobranca;
 import br.com.startquimica.backend.dto.ImportacaoArquivoResultDTO;
 import br.com.startquimica.backend.importacao.FormatoArquivo;
 import br.com.startquimica.backend.service.CobrancaService;
+import br.com.startquimica.backend.service.LogEnvioCobrancaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +33,7 @@ import java.time.LocalDate;
 public class CobrancaController {
 
     private final CobrancaService cobrancaService;
+    private final LogEnvioCobrancaService logEnvioCobrancaService;
 
     @GetMapping
     public Page<Cobranca> getAll(
@@ -71,6 +74,16 @@ public class CobrancaController {
     @PreAuthorize("hasAnyRole('ADMIN_TENANT', 'GERENTE', 'OPERADOR')")
     public ResponseEntity<Cobranca> enviar(@PathVariable Long id) {
         return ResponseEntity.ok(cobrancaService.enviarParaSankhya(id));
+    }
+
+    @GetMapping("/{id}/logs-envio")
+    @PreAuthorize("hasAnyRole('ADMIN_TENANT', 'GERENTE')")
+    public Page<LogEnvioCobranca> getLogsEnvio(
+            @PathVariable Long id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        return logEnvioCobrancaService.findByCobrancaId(
+                id, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "dataTentativa")));
     }
 
     @DeleteMapping("/{id}")

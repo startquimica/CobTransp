@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { ImportacaoArquivoResultDTO } from '../types';
+import type { ImportacaoArquivoResultDTO, LogEnvioCobranca } from '../types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
@@ -50,6 +50,16 @@ export function importarArquivo(
     formData.append('tipoDocumento', tipoDocumento);
     return api.post('/cobrancas/importar-arquivo', formData, {
         headers: { 'Content-Type': undefined },
+    }).then(r => r.data);
+}
+
+export function getLogsEnvio(
+    cobrancaId: number,
+    page: number = 0,
+    size: number = 20
+): Promise<{ content: LogEnvioCobranca[]; totalElements: number; totalPages: number }> {
+    return api.get(`/cobrancas/${cobrancaId}/logs-envio`, {
+        params: { page, size },
     }).then(r => r.data);
 }
 

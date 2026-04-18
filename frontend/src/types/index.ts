@@ -138,3 +138,21 @@ export interface DashboardTenantDTO {
     cobrancasPorTipo: Record<string, number>;
     ultimasCobrancas: CobrancaResumoDTO[];
 }
+
+// --- Log de Envio ---
+
+export interface LogEnvioCobranca {
+    id: number;
+    cobrancaId: number;
+    dataTentativa: string;
+    sucesso: boolean;
+    protocoloSankhya?: string;
+    codigoErro?: string;
+    mensagemErro?: string;
+    payloadEnviado: string;
+    respostaRecebida?: string;
+    urlDestino?: string;
+    usuarioId?: number;
+    origem: string;
+    tempoRespostaMs?: number;
+}

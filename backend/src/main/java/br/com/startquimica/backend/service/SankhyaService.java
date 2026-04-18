@@ -17,6 +17,9 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -36,6 +39,7 @@ public class SankhyaService {
 
     private final SankhyaProperties properties;
     private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public SankhyaService(SankhyaProperties properties) {
         this.properties = properties;
@@ -145,7 +149,29 @@ public class SankhyaService {
     // Montagem do payload
     // -------------------------------------------------------------------------
 
-    private Map<String, Object> buildPayload(Cobranca cobranca) {
+    /**
+     * Retorna a URL do serviço Sankhya (sem mgeSession).
+     */
+    public String getServiceUrl() {
+        return properties.getServiceUrl();
+    }
+
+    /**
+     * Serializa o payload da cobrança para JSON (para fins de log).
+     */
+    public String serializarPayload(Cobranca cobranca) {
+        Map<String, Object> data = buildPayload(cobranca);
+        Map<String, Object> fullPayload = new LinkedHashMap<>();
+        fullPayload.put("serviceName", "ImportacaoEDIFreteSP.integrarDocTransp");
+        fullPayload.put("requestBody", data);
+        try {
+            return objectMapper.writeValueAsString(fullPayload);
+        } catch (JsonProcessingException e) {
+            return fullPayload.toString();
+        }
+    }
+
+    Map<String, Object> buildPayload(Cobranca cobranca) {
         Map<String, Object> payload = new LinkedHashMap<>();
         payload.put("cnpjTransportador", cobranca.getTransportador() != null ? cobranca.getTransportador().getCnpj() : "");
         payload.put("cnpjContratante",   cobranca.getTomador()       != null ? cobranca.getTomador().getCnpj()       : "");
