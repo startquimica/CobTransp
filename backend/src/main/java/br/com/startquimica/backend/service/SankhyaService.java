@@ -5,6 +5,7 @@ import br.com.startquimica.backend.domain.Cobranca;
 import br.com.startquimica.backend.domain.DocumentoFiscal;
 import br.com.startquimica.backend.domain.Nota;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -77,12 +78,12 @@ public class SankhyaService {
         HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(payload, headers);
 
         try {
-            @SuppressWarnings("rawtypes")
-            ResponseEntity<Map> response = restTemplate.exchange(
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                     serviceUrl,
                     HttpMethod.POST,
                     httpEntity,
-                    Map.class);
+                    new ParameterizedTypeReference<>() {
+                    });
 
             return extractProtocolo(response.getBody(), cobranca.getId());
 
@@ -247,4 +248,3 @@ public class SankhyaService {
         return protocolo != null ? String.valueOf(protocolo) : codigo;
     }
 }
-

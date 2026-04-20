@@ -20,7 +20,7 @@ export const Layout = () => {
     };
 
     const navItems = [
-        { to: '/', icon: LayoutDashboard, label: 'Dashboard', roles: ['ADMIN_TENANT', 'GERENTE', 'OPERADOR', 'VISUALIZADOR'] },
+        { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', roles: ['ADMIN_TENANT', 'GERENTE', 'OPERADOR', 'VISUALIZADOR'] },
         { to: '/tenants', icon: Building2, label: 'Tenants', roles: ['ADMIN_TENANT'] },
         { to: '/usuarios', icon: Users, label: 'Usuários', roles: ['ADMIN_TENANT', 'GERENTE'] },
         { to: '/transportadores', icon: Truck, label: 'Transportadores', roles: ['GERENTE', 'OPERADOR', 'VISUALIZADOR'] },

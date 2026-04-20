@@ -16,9 +16,19 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email: " + email));
-
-        return UserPrincipal.create(usuario);
+        // O TenantContext pode estar ativo se o cliente enviou um JWT de sessão anterior.
+        // A busca de usuário para autenticação nunca deve ser filtrada por tenant,
+        // pois usuários ADMIN_TENANT não possuem tenant_id.
+        Long savedTenantId = TenantContext.getCurrentTenant();
+        TenantContext.clear();
+        try {
+            Usuario usuario = usuarioRepository.findByEmail(email)
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com email: " + email));
+            return UserPrincipal.create(usuario);
+        } finally {
+            if (savedTenantId != null) {
+                TenantContext.setCurrentTenant(savedTenantId);
+            }
+        }
     }
 }

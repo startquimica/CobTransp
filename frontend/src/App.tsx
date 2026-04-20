@@ -29,7 +29,8 @@ function App() {
             <Route path="/login" element={<Login />} />
 
             <Route path="/" element={<RequireAuth><Layout /></RequireAuth>}>
-              <Route index element={<Dashboard />} />
+              <Route index element={<Navigate to="dashboard" replace />} />
+              <Route path="dashboard" element={<Dashboard />} />
               <Route path="tenants" element={<RequireAuth roles={['ADMIN_TENANT']}><Tenants /></RequireAuth>} />
               <Route path="usuarios" element={<RequireAuth roles={['ADMIN_TENANT', 'GERENTE']}><Usuarios /></RequireAuth>} />
               <Route path="transportadores" element={<RequireAuth roles={['GERENTE', 'OPERADOR', 'VISUALIZADOR']}><Transportadores /></RequireAuth>} />

@@ -3,33 +3,37 @@ import type { ImportacaoArquivoResultDTO, LogEnvioCobranca } from '../types';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+  withCredentials: true, // Permite o envio de cookies entre domínios
 });
 
-// Interceptor para adicionar o token nas requisições
+// O interceptor para adicionar o token via header não é mais necessário
+// uma vez que a autenticação será gerenciada por cookies HttpOnly.
+// O código abaixo pode ser removido ou comentado.
+
+/*
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // A lógica de adicionar o token no header foi removida.
     return config;
   },
   (error) => {
     return Promise.reject(error);
   }
 );
+*/
 
 // Interceptor para tratar erros globais (opcional)
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
-      // Token expirado ou inválido
-      localStorage.removeItem('token');
-      // Poderia redirecionar para /login aqui se necessário
+    const requestUrl: string = error.config?.url ?? '';
+    // Não redireciona para /login em chamadas de verificação de sessão (/auth/me)
+    // ou quando já estamos na página de login, para evitar loop infinito.
+    const isSessionCheck = requestUrl.includes('/auth/me');
+    const isAlreadyOnLogin = window.location.pathname === '/login';
+
+    if (error.response?.status === 401 && !isSessionCheck && !isAlreadyOnLogin) {
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }

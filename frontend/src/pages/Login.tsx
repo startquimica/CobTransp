@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth, type User } from '../contexts/AuthContext';
 import api from '../services/api';
 
 // ─── Ícones inline (sem dependência extra) ────────────────────────────────────
@@ -180,8 +180,15 @@ const Login: React.FC = () => {
     try {
       const response = await api.post('/auth/login', { email, password });
       const data = response.data;
-      login(data.token);
-      navigate('/', { replace: true });
+      const userData: User = {
+        id: data.id,
+        tenantId: String(data.tenantId ?? ''),
+        nome: data.nome,
+        email: data.email,
+        role: (data.role?.replace(/^ROLE_/, '') ?? '') as User['role'],
+      };
+      login(userData);
+      navigate('/dashboard', { replace: true });
     } catch (err: any) {
       const message = err.response?.data?.message || 'Credenciais inválidas ou erro no servidor.';
       setError(message);

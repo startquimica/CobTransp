@@ -2,11 +2,11 @@ package br.com.startquimica.backend.service;
 
 import br.com.startquimica.backend.domain.Usuario;
 import br.com.startquimica.backend.dto.ForgotPasswordRequest;
-import br.com.startquimica.backend.dto.JwtResponse;
 import br.com.startquimica.backend.dto.LoginRequest;
 import br.com.startquimica.backend.repository.UsuarioRepository;
 import br.com.startquimica.backend.security.JwtTokenProvider;
 import br.com.startquimica.backend.security.UserPrincipal;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,6 +31,7 @@ public class AuthService {
     private final JwtTokenProvider tokenProvider;
     private final UsuarioRepository usuarioRepository;
     private final JavaMailSender mailSender;
+    private final CookieService cookieService;
 
     @Value("${app.mail.from:noreply@startquimica.com.br}")
     private String mailFrom;
@@ -38,7 +39,7 @@ public class AuthService {
     @Value("${app.frontend-url:http://localhost:5173}")
     private String frontendUrl;
 
-    public JwtResponse authenticateUser(LoginRequest loginRequest) {
+    public UserPrincipal authenticateUser(LoginRequest loginRequest, HttpServletResponse response) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getEmail(),
@@ -47,15 +48,13 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         String jwt = tokenProvider.generateToken(authentication);
-        UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+        cookieService.addJwtCookie(response, jwt);
 
-        return new JwtResponse(
-                jwt,
-                userPrincipal.getId(),
-                userPrincipal.getUsername(),
-                userPrincipal.getEmail(),
-                userPrincipal.getAuthorities().iterator().next().getAuthority(),
-                userPrincipal.getTenantId());
+        return (UserPrincipal) authentication.getPrincipal();
+    }
+
+    public void logout(HttpServletResponse response) {
+        cookieService.clearJwtCookie(response);
     }
 
     @Transactional
