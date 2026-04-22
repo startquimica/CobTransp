@@ -151,19 +151,19 @@ const Cobrancas = () => {
     };
 
     const columns = [
-        { header: 'ID', accessor: (item: any) => String(item?.id || '-') },
-        { header: 'Número', accessor: (item: any) => String(item?.numero || '-') },
+        { header: 'ID', accessor: (item: Cobranca) => String(item?.id || '-') },
+        { header: 'Número', accessor: (item: Cobranca) => String(item?.ordemCarga || '-') },
         { 
             header: 'Transportador', 
-            accessor: (item: any) => item?.transportador?.nome || '-' 
+            accessor: (item: Cobranca) => item?.transportador?.nome || '-' 
         },
         { 
             header: 'Tomador', 
-            accessor: (item: any) => item?.tomador?.nome || '-' 
+            accessor: (item: Cobranca) => item?.tomador?.nome || '-' 
         },
         { 
             header: 'Tipo', 
-            accessor: (item: any) => {
+            accessor: (item: Cobranca) => {
                 if (!item) return '-';
                 const labelCobranca = tipoCobrancaLabels[item.tipoCobranca] || item.tipoCobranca || '-';
                 const labelTransp = tipoTransporteLabels[item.tipoTransporte] || item.tipoTransporte || '-';
@@ -177,11 +177,11 @@ const Cobrancas = () => {
         },
         { 
             header: 'Valor', 
-            accessor: (item: any) => 'R$ ' + Number(item?.valor || 0).toFixed(2)
+            accessor: (item: Cobranca) => 'R$ ' + Number(item?.valor || 0).toFixed(2)
         },
         { 
             header: 'Status', 
-            accessor: (item: any) => {
+            accessor: (item: Cobranca) => {
                 const status = item?.status || '';
                 return (
                     <span className={'px-2 py-1 rounded-full text-[10px] font-semibold ' + (statusColors[status] || 'bg-gray-100')}>
@@ -192,7 +192,7 @@ const Cobrancas = () => {
         },
         {
             header: 'Últ. Alteração',
-            accessor: (item: any) => {
+            accessor: (item: Cobranca) => {
                 if (!item?.dataUltimaAlteracao) return '-';
                 const d = new Date(item.dataUltimaAlteracao);
                 return d.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
@@ -200,7 +200,7 @@ const Cobrancas = () => {
         },
         {
             header: 'Ações',
-            accessor: (item: any) => (
+            accessor: (item: Cobranca) => (
                 <div className="flex gap-2">
                     <button
                         onClick={() => handleEnviar(item)}

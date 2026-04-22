@@ -4,6 +4,6 @@ export interface JwtPayload {
   tenantId?: number;
   nome: string;
   sub: string;
-  role: 'ADMIN' | 'USER';
+  role: 'ADMIN_TENANT' | 'GERENTE' | 'OPERADOR' | 'VISUALIZADOR';
   exp: number;
 }

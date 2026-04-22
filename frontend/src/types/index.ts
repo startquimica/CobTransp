@@ -1,5 +1,5 @@
-export class BaseEntity {
-    id!: number;
+export interface BaseEntity {
+    id: number;
     tenantId?: number;
     createdAt?: string;
     updatedAt?: string;

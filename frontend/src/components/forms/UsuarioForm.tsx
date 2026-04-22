@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import { useAuth, type User } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
-import { type BaseEntity } from '../../types';
-
-interface Tenant extends BaseEntity {
-    nome: string;
-}
+import { type Tenant } from '../../types';
 
 interface UsuarioFormProps {
     onSuccess: () => void;
@@ -23,7 +19,7 @@ export const UsuarioForm: React.FC<UsuarioFormProps> = ({ onSuccess, onCancel, i
         nome: initialData?.nome || '',
         email: initialData?.email || '',
         senha: '',
-        telefone: (initialData as any)?.telefone || '',
+        telefone: initialData?.telefone || '',
         role: initialData?.role || 'OPERADOR',
         tenantId: initialData?.tenantId || undefined as number | undefined,
     });

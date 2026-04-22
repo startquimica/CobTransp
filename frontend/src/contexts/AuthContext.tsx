@@ -6,6 +6,7 @@ export interface User {
     tenantId: string;
     nome: string;
     email: string;
+    telefone?: string;
     role: 'ADMIN_TENANT' | 'GERENTE' | 'OPERADOR' | 'VISUALIZADOR';
 }
 
