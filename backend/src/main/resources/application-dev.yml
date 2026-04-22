@@ -34,3 +34,6 @@ app:
   frontend-url: "http://localhost:5173"
   mail:
     from: noreply@startquimica.com.br
+  jwt:
+    cookie-secure: false
+    cookie-same-site: Lax
