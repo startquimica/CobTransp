@@ -41,7 +41,7 @@ public class LogEnvioCobrancaService {
         logEnvio.setCobranca(cobranca);
         logEnvio.setTenantId(cobranca.getTenantId());
         logEnvio.setDataTentativa(LocalDateTime.now());
-        logEnvio.setSucesso(sucesso);
+        logEnvio.setSucesso(sucesso ? 'S' : 'N');
         logEnvio.setProtocoloSankhya(protocolo);
         logEnvio.setCodigoErro(codigoErro);
         logEnvio.setMensagemErro(mensagemErro);

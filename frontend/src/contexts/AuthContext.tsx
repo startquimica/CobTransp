@@ -16,7 +16,7 @@ export interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
     login: (userData: User) => void;
-    logout: () => void;
+    logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -26,9 +26,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
-    const logout = () => {
-        setUser(null);
-        setIsAuthenticated(false);
+    const logout = async () => {
+        try {
+            // Chama o backend para remover o cookie HttpOnly
+            await api.post('/auth/logout');
+        } catch (error) {
+            console.error('Erro ao fazer logout:', error);
+        } finally {
+            // Sempre limpa o estado local, mesmo se houver erro na API
+            setUser(null);
+            setIsAuthenticated(false);
+        }
     };
 
     const login = (userData: User) => {

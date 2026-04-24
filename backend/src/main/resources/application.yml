@@ -11,7 +11,7 @@ spring:
     properties:
       hibernate:
         format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.OracleDialect
   flyway:
     enabled: true
     baseline-on-migrate: true
@@ -27,6 +27,6 @@ jwt:
   expiration: ${JWT_EXPIRATION:86400000} # 24 horas em milissegundos
 
 server:
-  port: 8080
+  port: 8181
   servlet:
     context-path: /api

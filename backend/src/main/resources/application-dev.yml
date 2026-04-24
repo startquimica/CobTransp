@@ -3,10 +3,10 @@
 # Todas as configurações aqui são defaults para rodar local — não use em produção.
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/cobranca
-    username: postgres
-    password: "123456"
-    driver-class-name: org.postgresql.Driver
+    url: jdbc:oracle:thin:@//192.168.42.250:1521/HERP
+    username: ACERTOFRETE
+    password: "AcertoFreteHml#20!"
+    driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     show-sql: true
   mail:

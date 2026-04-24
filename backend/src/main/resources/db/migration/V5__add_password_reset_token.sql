@@ -1,3 +1,4 @@
 ALTER TABLE usuarios
-    ADD COLUMN IF NOT EXISTS password_reset_token VARCHAR(255),
-    ADD COLUMN IF NOT EXISTS password_reset_token_expiry TIMESTAMP;
+    ADD password_reset_token VARCHAR2(255);
+ALTER TABLE usuarios
+    ADD password_reset_token_expiry TIMESTAMP;

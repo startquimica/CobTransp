@@ -1,4 +1,3 @@
 -- Campos para rastreamento da integração com Sankhya
-ALTER TABLE cobrancas
-    ADD COLUMN data_envio       TIMESTAMP,
-    ADD COLUMN protocolo_sankhya VARCHAR(255);
+ALTER TABLE cobrancas ADD data_envio       TIMESTAMP;
+ALTER TABLE cobrancas ADD protocolo_sankhya VARCHAR(255);

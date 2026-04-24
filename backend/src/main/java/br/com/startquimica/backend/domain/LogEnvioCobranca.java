@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
@@ -36,8 +37,8 @@ public class LogEnvioCobranca extends BaseEntity {
     @Column(name = "data_tentativa", nullable = false)
     private LocalDateTime dataTentativa;
 
-    @Column(nullable = false)
-    private boolean sucesso;
+    @Column(nullable = false, length = 1, columnDefinition = "CHAR(1)")
+    private Character sucesso;
 
     @Column(name = "protocolo_sankhya")
     private String protocoloSankhya;
@@ -45,13 +46,16 @@ public class LogEnvioCobranca extends BaseEntity {
     @Column(name = "codigo_erro", length = 50)
     private String codigoErro;
 
-    @Column(name = "mensagem_erro", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "mensagem_erro", columnDefinition = "CLOB")
     private String mensagemErro;
 
-    @Column(name = "payload_enviado", nullable = false, columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "payload_enviado", nullable = false, columnDefinition = "CLOB")
     private String payloadEnviado;
 
-    @Column(name = "resposta_recebida", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "resposta_recebida", columnDefinition = "CLOB")
     private String respostaRecebida;
 
     @Column(name = "url_destino", length = 500)
@@ -75,7 +79,7 @@ public class LogEnvioCobranca extends BaseEntity {
      * payloadEnviado, respostaRecebida, urlDestino, origem, cobrancaId.
      */
     public String calcularHash() {
-        String input = String.valueOf(sucesso)
+        String input = (sucesso != null ? sucesso.toString() : "")
                 + "|" + (codigoErro != null ? codigoErro : "")
                 + "|" + (mensagemErro != null ? mensagemErro : "")
                 + "|" + (payloadEnviado != null ? payloadEnviado : "")

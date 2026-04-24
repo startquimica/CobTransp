@@ -1,2 +1,2 @@
 ALTER TABLE cobrancas
-    ADD COLUMN data_ultima_alteracao TIMESTAMP;
+    ADD data_ultima_alteracao TIMESTAMP;
